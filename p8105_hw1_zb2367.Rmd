@@ -15,20 +15,17 @@ library(ggplot2)
 data("penguins", package = "palmerpenguins")
 ```
 
-The `penguins` dataset contains measurements of penguins from the Palmer
-Archipelago in Antarctica. It has `r nrow(penguins)` rows and
-`r ncol(penguins)` columns, with one penguin per row. The species are
+The `penguins` dataset has `r nrow(penguins)` rows (one penguin per row)
+and `r ncol(penguins)` columns. It covers Antarctic penguins of three species:
 `r paste(levels(penguins$species), collapse = ", ")`, and the islands are
 `r paste(levels(penguins$island), collapse = ", ")`. Measurements include
 bill length and depth (mm), flipper length (mm), and body mass (g).
-The dataset also records sex (female or male, with some missing values)
+It also records sex (female or male, with missing values)
 and year (`r min(penguins$year)`–`r max(penguins$year)`).
 
 The mean flipper length is
 `r round(mean(penguins$flipper_length_mm, na.rm = TRUE), 2)` mm.
-This calculation excludes `r sum(is.na(penguins$flipper_length_mm))`
-missing flipper-length measurements, using the remaining
-`r sum(!is.na(penguins$flipper_length_mm))` observations.
+This excludes `r sum(is.na(penguins$flipper_length_mm))` missing values.
 
 ```{r penguin_scatterplot}
 penguin_plot = ggplot(
@@ -56,11 +53,10 @@ ggsave(
 )
 ```
 
-Each point represents a penguin, with species mapped to color. Species is
-a factor, so the colors form discrete groups. Bill and flipper lengths are
-numeric, so both axes are continuous. Gentoo penguins generally have longer
-flippers than the other two species. The plot omits rows with missing
-coordinates and is saved as `penguin_scatterplot.png` in the project directory.
+Each point is a penguin. Species determines discrete colors, while numeric
+measurements use continuous axes. Gentoo penguins generally have longer
+flippers. Missing coordinates are omitted; the plot is saved as
+`penguin_scatterplot.png`.
 
 ## Problem 2
 
@@ -84,10 +80,8 @@ sample_data = sample_data[
 sample_data
 ```
 
-The data frame has ten rows and four columns: a sample from a standard
-Normal distribution (mean 0 and standard deviation 1), a logical indicator
-of whether each sampled value is greater than zero, ten character values,
-and a factor with three levels. Setting a seed makes the sample reproducible.
+The ten rows contain standard Normal draws, an indicator for values above
+zero, letters, and a three-level factor. The seed makes the sample reproducible.
 
 ```{r variable_means}
 mean(sample_data$normal_sample)
@@ -96,12 +90,10 @@ mean(sample_data$character_value)
 mean(sample_data$factor_value)
 ```
 
-The numeric mean is
-`r round(mean(sample_data$normal_sample), 3)`.
-The logical mean is `r mean(sample_data$positive)`, the proportion of sampled
-values greater than zero: R treats `TRUE` as 1 and `FALSE` as 0 when taking
-this mean. The character and factor means both return `NA` with warnings
-because `mean()` does not accept these variable types as numeric measurements.
+The numeric mean is `r round(mean(sample_data$normal_sample), 3)`.
+The logical mean is `r mean(sample_data$positive)`, the proportion above zero.
+Character and factor means return `NA` with warnings because these types
+are not numeric or logical.
 
 ```{r numeric_coercion, results='hide', warning=FALSE}
 as.numeric(sample_data$positive)
@@ -109,16 +101,8 @@ as.numeric(sample_data$character_value)
 as.numeric(sample_data$factor_value)
 ```
 
-The logical values convert to 1 (`TRUE`) and 0 (`FALSE`), explaining why
-their mean is a proportion. The character values here are letters rather
-than numeric strings, so they convert to `NA` and normally produce a
-warning. Numeric strings such as `"12"` could be converted, but these letters
-cannot. Output and warnings are hidden in this chunk as requested.
-
-The factor converts to its internal level codes: `low` becomes 1, `medium`
-becomes 2, and `high` becomes 3, according to the explicitly specified level
-order. These codes identify categories; they do not establish numerical
-distances between the categories. Although the converted codes have a
-computable mean, it is not a meaningful average of the original categories.
-Thus, having internal integer codes does not make a factor a numeric
-measurement, and taking the mean of the original factor returns `NA`.
+Logical values become 1 (`TRUE`) or 0 (`FALSE`), explaining their proportion
+mean. Letters become `NA` with a warning because they are not numeric strings.
+Factors become level codes (`low` = 1, `medium` = 2, `high` = 3). These codes
+label categories, so their mean is not a meaningful category average;
+`mean()` on the original factor returns `NA`.
