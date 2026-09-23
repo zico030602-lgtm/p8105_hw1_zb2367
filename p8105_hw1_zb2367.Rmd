@@ -3,3 +3,61 @@ title: "P8105 Homework 1"
 author: "Zheming Bao"
 output: github_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7, fig.height = 5)
+library(ggplot2)
+```
+
+## Problem 1
+
+```{r load_penguins}
+data("penguins", package = "palmerpenguins")
+```
+
+The `penguins` dataset contains measurements of penguins from the Palmer
+Archipelago in Antarctica. It has `r nrow(penguins)` rows and
+`r ncol(penguins)` columns, with one penguin per row. The species are
+`r paste(levels(penguins$species), collapse = ", ")`, and the islands are
+`r paste(levels(penguins$island), collapse = ", ")`. Measurements include
+bill length and depth (mm), flipper length (mm), and body mass (g).
+The dataset also records sex (female or male, with some missing values)
+and year (`r min(penguins$year)`–`r max(penguins$year)`).
+
+The mean flipper length is
+`r round(mean(penguins$flipper_length_mm, na.rm = TRUE), 2)` mm.
+This calculation excludes `r sum(is.na(penguins$flipper_length_mm))`
+missing flipper-length measurements, using the remaining
+`r sum(!is.na(penguins$flipper_length_mm))` observations.
+
+```{r penguin_scatterplot}
+penguin_plot = ggplot(
+  penguins,
+  aes(x = bill_length_mm, y = flipper_length_mm, color = species)
+) +
+  geom_point(alpha = 0.75, na.rm = TRUE) +
+  labs(
+    title = "Bill length and flipper length by penguin species",
+    x = "Bill length (mm)",
+    y = "Flipper length (mm)",
+    color = "Species"
+  ) +
+  theme_minimal()
+
+penguin_plot
+
+ggsave(
+  filename = "penguin_scatterplot.png",
+  plot = penguin_plot,
+  width = 7,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+```
+
+Each point represents a penguin, with species mapped to color. Species is
+a factor, so the colors form discrete groups. Bill and flipper lengths are
+numeric, so both axes are continuous. Gentoo penguins generally have longer
+flippers than the other two species. The plot omits rows with missing
+coordinates and is saved as `penguin_scatterplot.png` in the project directory.
