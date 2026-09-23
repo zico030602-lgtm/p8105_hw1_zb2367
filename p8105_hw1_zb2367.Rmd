@@ -61,3 +61,64 @@ a factor, so the colors form discrete groups. Bill and flipper lengths are
 numeric, so both axes are continuous. Gentoo penguins generally have longer
 flippers than the other two species. The plot omits rows with missing
 coordinates and is saved as `penguin_scatterplot.png` in the project directory.
+
+## Problem 2
+
+```{r create_dataframe}
+set.seed(2367)
+
+sample_data = data.frame(
+  normal_sample = rnorm(10),
+  character_value = letters[1:10],
+  factor_value = factor(
+    rep(c("low", "medium", "high"), length.out = 10),
+    levels = c("low", "medium", "high")
+  )
+)
+
+sample_data$positive = sample_data$normal_sample > 0
+sample_data = sample_data[
+  c("normal_sample", "positive", "character_value", "factor_value")
+]
+
+sample_data
+```
+
+The data frame has ten rows and four columns: a sample from a standard
+Normal distribution (mean 0 and standard deviation 1), a logical indicator
+of whether each sampled value is greater than zero, ten character values,
+and a factor with three levels. Setting a seed makes the sample reproducible.
+
+```{r variable_means}
+mean(sample_data$normal_sample)
+mean(sample_data$positive)
+mean(sample_data$character_value)
+mean(sample_data$factor_value)
+```
+
+The numeric mean is
+`r round(mean(sample_data$normal_sample), 3)`.
+The logical mean is `r mean(sample_data$positive)`, the proportion of sampled
+values greater than zero: R treats `TRUE` as 1 and `FALSE` as 0 when taking
+this mean. The character and factor means both return `NA` with warnings
+because `mean()` does not accept these variable types as numeric measurements.
+
+```{r numeric_coercion, results='hide', warning=FALSE}
+as.numeric(sample_data$positive)
+as.numeric(sample_data$character_value)
+as.numeric(sample_data$factor_value)
+```
+
+The logical values convert to 1 (`TRUE`) and 0 (`FALSE`), explaining why
+their mean is a proportion. The character values here are letters rather
+than numeric strings, so they convert to `NA` and normally produce a
+warning. Numeric strings such as `"12"` could be converted, but these letters
+cannot. Output and warnings are hidden in this chunk as requested.
+
+The factor converts to its internal level codes: `low` becomes 1, `medium`
+becomes 2, and `high` becomes 3, according to the explicitly specified level
+order. These codes identify categories; they do not establish numerical
+distances between the categories. Although the converted codes have a
+computable mean, it is not a meaningful average of the original categories.
+Thus, having internal integer codes does not make a factor a numeric
+measurement, and taking the mean of the original factor returns `NA`.
